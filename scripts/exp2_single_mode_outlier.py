@@ -17,10 +17,20 @@ from mirnov_rmt.synthetic import generate_mirnov
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def mp_density(x: np.ndarray, q: float) -> np.ndarray:
+    """Marchenko-Pastur density for unit noise covariance."""
+    lam_minus = (1.0 - np.sqrt(q)) ** 2
+    lam_plus = (1.0 + np.sqrt(q)) ** 2
+    density = np.zeros_like(x, dtype=float)
+    mask = (x >= lam_minus) & (x <= lam_plus) & (x > 0.0)
+    density[mask] = np.sqrt((lam_plus - x[mask]) * (x[mask] - lam_minus)) / (2.0 * np.pi * q * x[mask])
+    return density
+
+
 def run(seed: int = 202) -> dict[str, float]:
     d, L, H, K, r = 48, 256, 256, 64, 30
     T = (K - 1) * H + L
-    n_true, snr_db = 2, 0.0
+    n_true, snr_db = 2, -30.0
     omega = 2.0 * np.pi * r / L
     Y, phi, _ = generate_mirnov(
         d=d,
@@ -36,12 +46,31 @@ def run(seed: int = 202) -> dict[str, float]:
     n_candidates = np.arange(-10, 11)
     n_hat, scores = estimate_n(eigvecs[:, 0], phi, n_candidates)
 
-    fig, ax = plt.subplots(figsize=(7.0, 4.4))
-    ax.plot(np.arange(1, len(eigvals) + 1), eigvals, marker="o", markersize=3, linewidth=1)
-    ax.axhline(threshold, color="#c03a2b", linestyle="--", label=f"MP edge={threshold:.2f}")
-    ax.set_title("Single-mode coherence eigenvalue spectrum")
-    ax.set_xlabel("Eigenvalue index")
-    ax.set_ylabel("Eigenvalue")
+    outlier_mask = eigvals > threshold
+    bulk_like = eigvals[~outlier_mask]
+    outliers = eigvals[outlier_mask]
+    x_max = max(float(eigvals[0]) * 1.08, threshold * 1.2)
+    x_grid = np.linspace(1e-6, x_max, 700)
+
+    fig, ax = plt.subplots(figsize=(7.4, 4.7))
+    ax.hist(bulk_like, bins=np.linspace(0.0, x_max, 36), density=True, color="#87aeca", alpha=0.78, edgecolor="white", label="bulk eigenvalues")
+    ax.plot(x_grid, mp_density(x_grid, d / K), color="#1f2937", linewidth=2.0, label="MP density")
+    ax.axvline(threshold, color="#c03a2b", linestyle="--", label=f"MP edge={threshold:.2f}")
+    for idx, val in enumerate(outliers, start=1):
+        ax.axvline(val, color="#b42318", linewidth=2.2)
+        ax.annotate(
+            f"outlier {idx}\n{val:.2f}",
+            xy=(val, 0.02),
+            xytext=(val, 0.18 + 0.06 * (idx - 1)),
+            arrowprops={"arrowstyle": "->", "color": "#b42318", "lw": 1.2},
+            ha="center",
+            color="#7a271a",
+        )
+    ax.scatter(eigvals, np.full_like(eigvals, -0.015), marker="|", color="#334155", s=70, clip_on=False, label="all eigenvalues")
+    ax.set_title("Single weak mode: MP bulk and detected outlier")
+    ax.set_xlabel("Eigenvalue")
+    ax.set_ylabel("Density")
+    ax.set_ylim(bottom=-0.05)
     ax.legend()
     fig.tight_layout()
     fig.savefig(ROOT / "figures" / "fig2_single_outlier_eigs.png", dpi=160)
@@ -67,6 +96,7 @@ def run(seed: int = 202) -> dict[str, float]:
         "n_hat": n_hat,
         "lambda_max": float(eigvals[0]),
         "threshold": threshold,
+        "outlier_count": int(np.sum(outlier_mask)),
         "detected": bool(result["detected"]),
         "alignment_true_n": float(scores[n_true]),
     }

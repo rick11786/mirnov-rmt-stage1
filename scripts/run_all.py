@@ -35,6 +35,22 @@ def _method_table() -> str:
     return df.to_html(index=False)
 
 
+def _glossary() -> str:
+    rows = [
+        ("d", "Number of Mirnov channels / sensors in the synthetic toroidal array."),
+        ("K", "Number of Welch Fourier snapshots used to estimate the spectral matrix."),
+        ("q=d/K", "High-dimensional aspect ratio controlling the MP bulk width."),
+        ("n_true", "The toroidal mode number used to generate the synthetic rotating mode."),
+        ("n_hat", "The toroidal mode number estimated from the leading outlier eigenvector."),
+        ("lambda_max", "Largest eigenvalue of the spectral coherence matrix at the target frequency."),
+        ("MP edge", "Analytic upper edge lambda_+=(1+sqrt(d/K))^2 under the white-noise null."),
+        ("outlier", "An eigenvalue above the chosen threshold; statistically, a coherent spatial direction."),
+        ("score(n)", "Squared alignment |v_hat^* v_n|^2 between an eigenvector and toroidal template n."),
+        ("alignment_true_n", "score(n_true); close to 1 means the eigenvector recovers the injected mode shape."),
+    ]
+    return pd.DataFrame(rows, columns=["Term", "Meaning"]).to_html(index=False)
+
+
 def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
     sections = [
         (
@@ -46,15 +62,25 @@ def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
             [],
         ),
         (
+            "Glossary",
+            "<p>The plots and CSV files use the following notation.</p>" + _glossary(),
+            [],
+        ),
+        (
             "Experiment 1: Noise-only MP Bulk",
             "<p>Noise-only spectral coherence eigenvalues are compared with the "
-            "Marchenko-Pastur support.</p>" + _csv_table(ROOT / "results" / "exp1_noise_mp_bulk.csv"),
+            "Marchenko-Pastur support. The black curve is the analytic MP density; "
+            "short marks along the bottom show the individual sample eigenvalues.</p>"
+            + _csv_table(ROOT / "results" / "exp1_noise_mp_bulk.csv"),
             ["figures/fig1_noise_mp_bulk.png"],
         ),
         (
             "Experiment 2: Single-mode Outlier",
-            "<p>A coherent rotating mode is injected at the target Fourier bin. "
-            "The leading eigenvector is matched against toroidal templates.</p>"
+            "<p>A weak coherent rotating mode is injected at the target Fourier bin "
+            "using <code>SNR=-30 dB</code>, so the MP bulk and the spike remain visible "
+            "on the same axis. Red vertical markers label all eigenvalues above the "
+            "MP edge. The leading outlier eigenvector is then matched against "
+            "toroidal templates; the score plot shows <code>score(n)=|v_hat^*v_n|^2</code>.</p>"
             + _csv_table(ROOT / "results" / "exp2_single_mode_outlier.csv"),
             ["figures/fig2_single_outlier_eigs.png", "figures/fig2_n_scores.png"],
         ),

@@ -16,9 +16,60 @@ td,th{border:1px solid #d7dee8;padding:.45rem;text-align:left}
 </head><body>
 <h1>Synthetic Mirnov RMT Stage 1 Report</h1>
 <h2>Summary</h2>
-<p>Stage one has been executed on purely synthetic Mirnov-like data. Generated PNG/CSV files are intentionally ignored by git and are meant for local inspection.</p><pre>{'exp1': {'d': 48, 'K': 64, 'q': 0.75, 'lambda_minus': np.float64(0.01794919243112272), 'lambda_plus': np.float64(3.482050807568877), 'lambda_max': 3.1089541150700795, 'lambda_min': 0.020580401894380426, 'mp_outlier_count': 0}, 'exp2': {'d': 48, 'K': 64, 'snr_db': 0.0, 'n_true': 2, 'n_hat': 2, 'lambda_max': 47.45240275713396, 'threshold': 3.482050807568877, 'detected': True, 'alignment_true_n': 0.9999224155186616}, 'exp3': {'mp_false_positive': 0.0, 'sur_false_positive': 0.08333333333333333, 'tau_sur': 3.361579122546519, 'M': 60}, 'exp4': {'M': 40, 'mean_detection': 1.0, 'mean_n_accuracy': 1.0}, 'exp5': {'cases': 4, 'max_band_rank': 2, 'mean_band_rank': 2.0}}</pre>
+<p>Stage one has been executed on purely synthetic Mirnov-like data. Generated PNG/CSV files are intentionally ignored by git and are meant for local inspection.</p><pre>{'exp1': {'d': 48, 'K': 64, 'q': 0.75, 'lambda_minus': np.float64(0.01794919243112272), 'lambda_plus': np.float64(3.482050807568877), 'lambda_max': 3.1089541150700795, 'lambda_min': 0.020580401894380426, 'mp_outlier_count': 0}, 'exp2': {'d': 48, 'K': 64, 'snr_db': -30.0, 'n_true': 2, 'n_hat': 2, 'lambda_max': 4.957096601795818, 'threshold': 3.482050807568877, 'outlier_count': 1, 'detected': True, 'alignment_true_n': 0.8290426466383455}, 'exp3': {'mp_false_positive': 0.0, 'sur_false_positive': 0.08333333333333333, 'tau_sur': 3.361579122546519, 'M': 60}, 'exp4': {'M': 40, 'mean_detection': 1.0, 'mean_n_accuracy': 1.0}, 'exp5': {'cases': 4, 'max_band_rank': 2, 'mean_band_rank': 2.0}}</pre>
+<h2>Glossary</h2>
+<p>The plots and CSV files use the following notation.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Term</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>d</td>
+      <td>Number of Mirnov channels / sensors in the synthetic toroidal array.</td>
+    </tr>
+    <tr>
+      <td>K</td>
+      <td>Number of Welch Fourier snapshots used to estimate the spectral matrix.</td>
+    </tr>
+    <tr>
+      <td>q=d/K</td>
+      <td>High-dimensional aspect ratio controlling the MP bulk width.</td>
+    </tr>
+    <tr>
+      <td>n_true</td>
+      <td>The toroidal mode number used to generate the synthetic rotating mode.</td>
+    </tr>
+    <tr>
+      <td>n_hat</td>
+      <td>The toroidal mode number estimated from the leading outlier eigenvector.</td>
+    </tr>
+    <tr>
+      <td>lambda_max</td>
+      <td>Largest eigenvalue of the spectral coherence matrix at the target frequency.</td>
+    </tr>
+    <tr>
+      <td>MP edge</td>
+      <td>Analytic upper edge lambda_+=(1+sqrt(d/K))^2 under the white-noise null.</td>
+    </tr>
+    <tr>
+      <td>outlier</td>
+      <td>An eigenvalue above the chosen threshold; statistically, a coherent spatial direction.</td>
+    </tr>
+    <tr>
+      <td>score(n)</td>
+      <td>Squared alignment |v_hat^* v_n|^2 between an eigenvector and toroidal template n.</td>
+    </tr>
+    <tr>
+      <td>alignment_true_n</td>
+      <td>score(n_true); close to 1 means the eigenvector recovers the injected mode shape.</td>
+    </tr>
+  </tbody>
+</table>
 <h2>Experiment 1: Noise-only MP Bulk</h2>
-<p>Noise-only spectral coherence eigenvalues are compared with the Marchenko-Pastur support.</p><table border="1" class="dataframe">
+<p>Noise-only spectral coherence eigenvalues are compared with the Marchenko-Pastur support. The black curve is the analytic MP density; short marks along the bottom show the individual sample eigenvalues.</p><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>d</th>
@@ -48,7 +99,7 @@ td,th{border:1px solid #d7dee8;padding:.45rem;text-align:left}
 <a href="figures/fig1_noise_mp_bulk.png"><img src="figures/fig1_noise_mp_bulk.png" alt="figures/fig1_noise_mp_bulk.png"></a>
 </div>
 <h2>Experiment 2: Single-mode Outlier</h2>
-<p>A coherent rotating mode is injected at the target Fourier bin. The leading eigenvector is matched against toroidal templates.</p><table border="1" class="dataframe">
+<p>A weak coherent rotating mode is injected at the target Fourier bin using <code>SNR=-30 dB</code>, so the MP bulk and the spike remain visible on the same axis. Red vertical markers label all eigenvalues above the MP edge. The leading outlier eigenvector is then matched against toroidal templates; the score plot shows <code>score(n)=|v_hat^*v_n|^2</code>.</p><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>d</th>
@@ -58,6 +109,7 @@ td,th{border:1px solid #d7dee8;padding:.45rem;text-align:left}
       <th>n_hat</th>
       <th>lambda_max</th>
       <th>threshold</th>
+      <th>outlier_count</th>
       <th>detected</th>
       <th>alignment_true_n</th>
     </tr>
@@ -66,13 +118,14 @@ td,th{border:1px solid #d7dee8;padding:.45rem;text-align:left}
     <tr>
       <td>48</td>
       <td>64</td>
-      <td>0</td>
+      <td>-30</td>
       <td>2</td>
       <td>2</td>
-      <td>47.45</td>
+      <td>4.957</td>
       <td>3.482</td>
+      <td>1</td>
       <td>True</td>
-      <td>0.9999</td>
+      <td>0.829</td>
     </tr>
   </tbody>
 </table>
