@@ -73,6 +73,14 @@ pip install -e .
 pytest
 ```
 
+## Run Stage-One Experiments
+
+```bash
+python scripts/run_all.py
+```
+
+This generates local-only figures and CSV files, then rebuilds `report.html`.
+
 ## Planned Outputs
 
 - `report.html`: browser-readable local report
@@ -149,6 +157,14 @@ pip install -e .
 ```bash
 pytest
 ```
+
+## 运行阶段一实验
+
+```bash
+python scripts/run_all.py
+```
+
+该命令会生成本地图片和 CSV，并重建 `report.html`。
 
 ## 计划产物
 

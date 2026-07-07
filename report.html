@@ -1,46 +1,603 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Synthetic Mirnov RMT Stage 1</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-      margin: 2rem auto;
-      max-width: 920px;
-      padding: 0 1rem;
-      color: #1f2933;
-    }
-    code {
-      background: #f1f5f9;
-      padding: 0.1rem 0.25rem;
-      border-radius: 4px;
-    }
-    .note {
-      border-left: 4px solid #2563eb;
-      padding-left: 1rem;
-      color: #334155;
-    }
-  </style>
-</head>
-<body>
-  <h1>Synthetic Mirnov RMT Stage 1</h1>
-  <p class="note">
-    This is a placeholder report. The experiment scripts will later populate
-    this page with figures, CSV summaries, and interpretation notes.
-  </p>
-  <h2>Project Locations</h2>
-  <p>Runnable WSL project: <code>/home/wenyin/local_side_projects/mirnov_rmt_stage1</code></p>
-  <p>Windows viewing folder: <code>C:\Users\28105\Documents\mirnov_rmt_stage1</code></p>
-  <h2>Planned Figures</h2>
-  <ul>
-    <li>Noise-only eigenvalue histogram vs MP support</li>
-    <li>Single-mode eigenvalue outlier and toroidal mode score</li>
-    <li>SNR sweep detection and alignment curves</li>
-    <li>d/K sweep heatmaps</li>
-    <li>Two-mode frequency separation comparison</li>
-  </ul>
-</body>
-</html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Mirnov RMT Stage 1 Report</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.5;margin:2rem auto;max-width:1100px;padding:0 1rem;color:#172033}
+h1,h2{line-height:1.2}
+code{background:#eef2f7;padding:.1rem .25rem;border-radius:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem}
+img{max-width:100%;border:1px solid #d7dee8;border-radius:6px}
+table{border-collapse:collapse;width:100%;margin:1rem 0}
+td,th{border:1px solid #d7dee8;padding:.45rem;text-align:left}
+</style>
+</head><body>
+<h1>Synthetic Mirnov RMT Stage 1 Report</h1>
+<h2>Summary</h2>
+<p>Stage one has been executed on purely synthetic Mirnov-like data. Generated PNG/CSV files are intentionally ignored by git and are meant for local inspection.</p><pre>{'exp1': {'d': 48, 'K': 64, 'q': 0.75, 'lambda_minus': np.float64(0.01794919243112272), 'lambda_plus': np.float64(3.482050807568877), 'lambda_max': 3.1089541150700795, 'lambda_min': 0.020580401894380426, 'mp_outlier_count': 0}, 'exp2': {'d': 48, 'K': 64, 'snr_db': 0.0, 'n_true': 2, 'n_hat': 2, 'lambda_max': 47.45240275713396, 'threshold': 3.482050807568877, 'detected': True, 'alignment_true_n': 0.9999224155186616}, 'exp3': {'mp_false_positive': 0.0, 'sur_false_positive': 0.08333333333333333, 'tau_sur': 3.361579122546519, 'M': 60}, 'exp4': {'M': 40, 'mean_detection': 1.0, 'mean_n_accuracy': 1.0}, 'exp5': {'cases': 4, 'max_band_rank': 2, 'mean_band_rank': 2.0}}</pre>
+<h2>Experiment 1: Noise-only MP Bulk</h2>
+<p>Noise-only spectral coherence eigenvalues are compared with the Marchenko-Pastur support.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>d</th>
+      <th>K</th>
+      <th>q</th>
+      <th>lambda_minus</th>
+      <th>lambda_plus</th>
+      <th>lambda_max</th>
+      <th>lambda_min</th>
+      <th>mp_outlier_count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>48</td>
+      <td>64</td>
+      <td>0.75</td>
+      <td>0.01795</td>
+      <td>3.482</td>
+      <td>3.109</td>
+      <td>0.02058</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<div class="grid">
+<a href="figures/fig1_noise_mp_bulk.png"><img src="figures/fig1_noise_mp_bulk.png" alt="figures/fig1_noise_mp_bulk.png"></a>
+</div>
+<h2>Experiment 2: Single-mode Outlier</h2>
+<p>A coherent rotating mode is injected at the target Fourier bin. The leading eigenvector is matched against toroidal templates.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>d</th>
+      <th>K</th>
+      <th>snr_db</th>
+      <th>n_true</th>
+      <th>n_hat</th>
+      <th>lambda_max</th>
+      <th>threshold</th>
+      <th>detected</th>
+      <th>alignment_true_n</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>48</td>
+      <td>64</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>47.45</td>
+      <td>3.482</td>
+      <td>True</td>
+      <td>0.9999</td>
+    </tr>
+  </tbody>
+</table>
+<div class="grid">
+<a href="figures/fig2_single_outlier_eigs.png"><img src="figures/fig2_single_outlier_eigs.png" alt="figures/fig2_single_outlier_eigs.png"></a>
+<a href="figures/fig2_n_scores.png"><img src="figures/fig2_n_scores.png" alt="figures/fig2_n_scores.png"></a>
+</div>
+<h2>Experiment 3: SNR Sweep</h2>
+<p>Detection probability, outlier margin, eigenvector alignment and n recovery are evaluated over SNR.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>snr_db</th>
+      <th>M</th>
+      <th>mp_detection_probability</th>
+      <th>sur_detection_probability</th>
+      <th>mean_lambda_max</th>
+      <th>mean_lambda_minus_mp</th>
+      <th>mean_alignment</th>
+      <th>n_accuracy</th>
+      <th>mp_false_positive</th>
+      <th>sur_false_positive</th>
+      <th>surrogate_threshold</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-80</td>
+      <td>60</td>
+      <td>0</td>
+      <td>0.05</td>
+      <td>3.209</td>
+      <td>-0.2735</td>
+      <td>0.02151</td>
+      <td>0.08333</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-70</td>
+      <td>60</td>
+      <td>0.01667</td>
+      <td>0.06667</td>
+      <td>3.179</td>
+      <td>-0.3026</td>
+      <td>0.02301</td>
+      <td>0.01667</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-60</td>
+      <td>60</td>
+      <td>0.01667</td>
+      <td>0.08333</td>
+      <td>3.204</td>
+      <td>-0.2781</td>
+      <td>0.02573</td>
+      <td>0.05</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-50</td>
+      <td>60</td>
+      <td>0</td>
+      <td>0.01667</td>
+      <td>3.196</td>
+      <td>-0.2864</td>
+      <td>0.02214</td>
+      <td>0.06667</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-40</td>
+      <td>60</td>
+      <td>0.01667</td>
+      <td>0.05</td>
+      <td>3.173</td>
+      <td>-0.3087</td>
+      <td>0.06173</td>
+      <td>0.3667</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-35</td>
+      <td>60</td>
+      <td>0.2667</td>
+      <td>0.5</td>
+      <td>3.379</td>
+      <td>-0.1033</td>
+      <td>0.3644</td>
+      <td>0.9833</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-30</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>5.423</td>
+      <td>1.941</td>
+      <td>0.8187</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-25</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>11.53</td>
+      <td>8.046</td>
+      <td>0.9508</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-20</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>22.95</td>
+      <td>19.47</td>
+      <td>0.9869</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-15</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>35.39</td>
+      <td>31.91</td>
+      <td>0.9967</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-10</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>43.14</td>
+      <td>39.66</td>
+      <td>0.999</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+    <tr>
+      <td>-5</td>
+      <td>60</td>
+      <td>1</td>
+      <td>1</td>
+      <td>46.34</td>
+      <td>42.86</td>
+      <td>0.9997</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.08333</td>
+      <td>3.362</td>
+    </tr>
+  </tbody>
+</table>
+<div class="grid">
+<a href="figures/fig3_snr_detection.png"><img src="figures/fig3_snr_detection.png" alt="figures/fig3_snr_detection.png"></a>
+<a href="figures/fig3_alignment_n_accuracy.png"><img src="figures/fig3_alignment_n_accuracy.png" alt="figures/fig3_alignment_n_accuracy.png"></a>
+<a href="figures/fig3_lambda_margin.png"><img src="figures/fig3_lambda_margin.png" alt="figures/fig3_lambda_margin.png"></a>
+</div>
+<h2>Experiment 4: d/K Sweep</h2>
+<p>The aspect ratio q=d/K changes the MP edge and therefore the detectability of weak coherent modes.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>d</th>
+      <th>K</th>
+      <th>q</th>
+      <th>M</th>
+      <th>snr_db</th>
+      <th>mp_detection_probability</th>
+      <th>n_accuracy</th>
+      <th>mean_estimated_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>16</td>
+      <td>8</td>
+      <td>2</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>16</td>
+      <td>1</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>32</td>
+      <td>0.5</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>64</td>
+      <td>0.25</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>128</td>
+      <td>0.125</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>8</td>
+      <td>4</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>16</td>
+      <td>2</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>32</td>
+      <td>1</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>64</td>
+      <td>0.5</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>128</td>
+      <td>0.25</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>8</td>
+      <td>6</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>16</td>
+      <td>3</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>32</td>
+      <td>1.5</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>64</td>
+      <td>0.75</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>128</td>
+      <td>0.375</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>8</td>
+      <td>8</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>16</td>
+      <td>4</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>32</td>
+      <td>2</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>64</td>
+      <td>1</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>128</td>
+      <td>0.5</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<div class="grid">
+<a href="figures/fig4_dk_detection_heatmap.png"><img src="figures/fig4_dk_detection_heatmap.png" alt="figures/fig4_dk_detection_heatmap.png"></a>
+<a href="figures/fig4_dk_n_accuracy_heatmap.png"><img src="figures/fig4_dk_n_accuracy_heatmap.png" alt="figures/fig4_dk_n_accuracy_heatmap.png"></a>
+</div>
+<h2>Experiment 5: Two-mode Frequency Separation</h2>
+<p>Two close rotating modes are compared using FFT average power, per-bin coherence rank and a band-averaged coherence matrix.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>delta_label</th>
+      <th>delta_omega</th>
+      <th>band_rank</th>
+      <th>band_lambda1</th>
+      <th>band_lambda2</th>
+      <th>band_n_hat_1</th>
+      <th>band_n_hat_2</th>
+      <th>band_score1_n1</th>
+      <th>band_score1_n2</th>
+      <th>band_score2_n1</th>
+      <th>band_score2_n2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2pi_over_L</td>
+      <td>0.02454</td>
+      <td>2</td>
+      <td>29.47</td>
+      <td>16.54</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.6147</td>
+      <td>0.3642</td>
+      <td>0.3759</td>
+      <td>0.6125</td>
+    </tr>
+    <tr>
+      <td>pi_over_L</td>
+      <td>0.01227</td>
+      <td>2</td>
+      <td>24.11</td>
+      <td>20.02</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.9998</td>
+      <td>7.767e-05</td>
+      <td>7.793e-05</td>
+      <td>0.999</td>
+    </tr>
+    <tr>
+      <td>pi_over_2L</td>
+      <td>0.006136</td>
+      <td>2</td>
+      <td>23.32</td>
+      <td>15.73</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.9995</td>
+      <td>0.0003853</td>
+      <td>0.000387</td>
+      <td>0.9976</td>
+    </tr>
+    <tr>
+      <td>pi_over_4L</td>
+      <td>0.003068</td>
+      <td>2</td>
+      <td>23.1</td>
+      <td>13.71</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.9997</td>
+      <td>6.015e-05</td>
+      <td>6.089e-05</td>
+      <td>0.9982</td>
+    </tr>
+  </tbody>
+</table>
+<div class="grid">
+<a href="figures/fig5_two_mode_frequency_separation.png"><img src="figures/fig5_two_mode_frequency_separation.png" alt="figures/fig5_two_mode_frequency_separation.png"></a>
+<a href="figures/fig5_band_averaged_outliers.png"><img src="figures/fig5_band_averaged_outliers.png" alt="figures/fig5_band_averaged_outliers.png"></a>
+</div>
+<h2>Method Comparison</h2>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Detection target</th>
+      <th>Threshold</th>
+      <th>Output</th>
+      <th>Limitation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FFT peak</td>
+      <td>frequency energy</td>
+      <td>noise Monte Carlo / surrogate</td>
+      <td>peak frequency</td>
+      <td>no spatial coherence</td>
+    </tr>
+    <tr>
+      <td>SVD/BOD</td>
+      <td>time-domain energy components</td>
+      <td>singular threshold</td>
+      <td>rank / spatial PCs</td>
+      <td>PCs not necessarily modes</td>
+    </tr>
+    <tr>
+      <td>MP edge</td>
+      <td>spectral coherence outlier</td>
+      <td>analytic MP edge</td>
+      <td>rank / eigenvector / n</td>
+      <td>idealized null</td>
+    </tr>
+    <tr>
+      <td>MP + surrogate</td>
+      <td>spectral coherence outlier</td>
+      <td>empirical null</td>
+      <td>rank / eigenvector / n</td>
+      <td>more compute</td>
+    </tr>
+  </tbody>
+</table>
+</body></html>
