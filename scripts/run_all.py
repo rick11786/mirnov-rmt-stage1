@@ -69,8 +69,10 @@ def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
         (
             "Experiment 1: Noise-only MP Bulk",
             "<p>Noise-only spectral coherence eigenvalues are compared with the "
-            "Marchenko-Pastur support. The black curve is the analytic MP density; "
-            "short marks along the bottom show the individual sample eigenvalues.</p>"
+            "Marchenko-Pastur support. The blue solid curve is a Monte Carlo "
+            "noise-only density estimate from repeated simulations; the orange "
+            "dashed curve is the analytic MP density, plotted only on its support. "
+            "The histogram shows one representative realization.</p>"
             + _csv_table(ROOT / "results" / "exp1_noise_mp_bulk.csv"),
             ["figures/fig1_noise_mp_bulk.png"],
         ),

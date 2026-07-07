@@ -50,11 +50,11 @@ def run(seed: int = 202) -> dict[str, float]:
     bulk_like = eigvals[~outlier_mask]
     outliers = eigvals[outlier_mask]
     x_max = max(float(eigvals[0]) * 1.08, threshold * 1.2)
-    x_grid = np.linspace(1e-6, x_max, 700)
+    x_mp = np.linspace(mp_edges(d, K)[0], threshold, 500)
 
     fig, ax = plt.subplots(figsize=(7.4, 4.7))
     ax.hist(bulk_like, bins=np.linspace(0.0, x_max, 36), density=True, color="#87aeca", alpha=0.78, edgecolor="white", label="bulk eigenvalues")
-    ax.plot(x_grid, mp_density(x_grid, d / K), color="#1f2937", linewidth=2.0, label="MP density")
+    ax.plot(x_mp, mp_density(x_mp, d / K), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
     ax.axvline(threshold, color="#c03a2b", linestyle="--", label=f"MP edge={threshold:.2f}")
     for idx, val in enumerate(outliers, start=1):
         ax.axvline(val, color="#b42318", linewidth=2.2)
@@ -66,11 +66,10 @@ def run(seed: int = 202) -> dict[str, float]:
             ha="center",
             color="#7a271a",
         )
-    ax.scatter(eigvals, np.full_like(eigvals, -0.015), marker="|", color="#334155", s=70, clip_on=False, label="all eigenvalues")
     ax.set_title("Single weak mode: MP bulk and detected outlier")
     ax.set_xlabel("Eigenvalue")
     ax.set_ylabel("Density")
-    ax.set_ylim(bottom=-0.05)
+    ax.set_ylim(bottom=0.0)
     ax.legend()
     fig.tight_layout()
     fig.savefig(ROOT / "figures" / "fig2_single_outlier_eigs.png", dpi=160)
