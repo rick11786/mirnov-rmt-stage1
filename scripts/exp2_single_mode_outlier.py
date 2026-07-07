@@ -64,14 +64,28 @@ def run(seed: int = 202) -> dict[str, float]:
         color="#475569",
         ha="left",
     )
+    y_upper = ax.get_ylim()[1]
+    y_marker = 0.08 * y_upper
+    y_label = 0.17 * y_upper
     for idx, val in enumerate(outliers, start=1):
-        ax.axvline(val, color="#b42318", linewidth=2.2)
-        ax.annotate(
-            f"outlier {idx}\n{val:.2f}",
-            xy=(val, 0.02),
-            xytext=(val, 0.18 + 0.06 * (idx - 1)),
-            arrowprops={"arrowstyle": "->", "color": "#b42318", "lw": 1.2},
+        ax.scatter(
+            [val],
+            [y_marker],
+            marker="D",
+            s=58,
+            color="#b42318",
+            edgecolor="white",
+            linewidth=0.8,
+            zorder=4,
+            label="outlier eigenvalue" if idx == 1 else None,
+        )
+        ax.text(
+            val,
+            y_label + 0.07 * y_upper * (idx - 1),
+            f"{idx}: {val:.2f}",
             ha="center",
+            va="bottom",
+            fontsize=9,
             color="#7a271a",
         )
     ax.set_title("Single weak mode: MP bulk and detected outlier")

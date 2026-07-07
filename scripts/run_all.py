@@ -35,22 +35,6 @@ def _method_table() -> str:
     return df.to_html(index=False)
 
 
-def _glossary() -> str:
-    rows = [
-        ("d", "Number of Mirnov channels / sensors in the synthetic toroidal array."),
-        ("K", "Number of Welch Fourier snapshots used to estimate the spectral matrix."),
-        ("q=d/K", "High-dimensional aspect ratio controlling the MP bulk width."),
-        ("n_true", "The toroidal mode number used to generate the synthetic rotating mode."),
-        ("n_hat", "The toroidal mode number estimated from the leading outlier eigenvector."),
-        ("lambda_max", "Largest eigenvalue of the spectral coherence matrix at the target frequency."),
-        ("MP edge", "Analytic upper edge lambda_+=(1+sqrt(d/K))^2 under the white-noise null."),
-        ("outlier", "An eigenvalue above the chosen threshold; statistically, a coherent spatial direction."),
-        ("score(n)", "Squared alignment |v_hat^* v_n|^2 between an eigenvector and toroidal template n."),
-        ("alignment_true_n", "score(n_true); close to 1 means the eigenvector recovers the injected mode shape."),
-    ]
-    return pd.DataFrame(rows, columns=["Term", "Meaning"]).to_html(index=False)
-
-
 def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
     sections = [
         (
@@ -59,11 +43,6 @@ def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
             "Generated PNG/CSV files are intentionally ignored by git and are meant "
             "for local inspection.</p>"
             f"<pre>{summaries}</pre>",
-            [],
-        ),
-        (
-            "Glossary",
-            "<p>The plots and CSV files use the following notation.</p>" + _glossary(),
             [],
         ),
         (
@@ -80,7 +59,7 @@ def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
             "Experiment 2: Single-mode Outlier",
             "<p>A weak coherent rotating mode is injected at the target Fourier bin "
             "using <code>SNR=-30 dB</code>, so the MP bulk and the spike remain visible "
-            "on the same axis. Red vertical markers label all eigenvalues above the "
+            "on the same axis. Red diamond markers label eigenvalues above the "
             "MP edge. The leading outlier eigenvector is then matched against "
             "toroidal templates; the score plot shows <code>score(n)=|v_hat^*v_n|^2</code>.</p>"
             + _csv_table(ROOT / "results" / "exp2_single_mode_outlier.csv"),
@@ -105,9 +84,15 @@ def rebuild_report(summaries: dict[str, dict[str, object]]) -> None:
         (
             "Experiment 5: Two-mode Frequency Separation",
             "<p>Two close rotating modes are compared using FFT average power, "
-            "per-bin coherence rank and a band-averaged coherence matrix.</p>"
+            "per-bin coherence rank and a band-averaged coherence matrix. The "
+            "two-spike spectrum panel shows a representative band-averaged case "
+            "where two eigenvalues exceed the MP edge.</p>"
             + _csv_table(ROOT / "results" / "exp5_two_mode_band.csv"),
-            ["figures/fig5_two_mode_frequency_separation.png", "figures/fig5_band_averaged_outliers.png"],
+            [
+                "figures/fig5_two_mode_frequency_separation.png",
+                "figures/fig5_band_averaged_outliers.png",
+                "figures/fig5_two_spike_band_spectrum.png",
+            ],
         ),
         ("Method Comparison", _method_table(), []),
     ]

@@ -19,6 +19,16 @@ from mirnov_rmt.synthetic import generate_mirnov
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def mp_density(x: np.ndarray, q: float) -> np.ndarray:
+    """Marchenko-Pastur density for unit noise covariance."""
+    lam_minus = (1.0 - np.sqrt(q)) ** 2
+    lam_plus = (1.0 + np.sqrt(q)) ** 2
+    density = np.zeros_like(x, dtype=float)
+    mask = (x >= lam_minus) & (x <= lam_plus) & (x > 0.0)
+    density[mask] = np.sqrt((lam_plus - x[mask]) * (x[mask] - lam_minus)) / (2.0 * np.pi * q * x[mask])
+    return density
+
+
 def _coherence_at(Y: np.ndarray, L: int, H: int, r: int) -> tuple[np.ndarray, np.ndarray]:
     X = fourier_snapshots(Y, L=L, H=H, r=r)
     C = coherence_matrix(cross_spectral_matrix(X))
@@ -39,6 +49,8 @@ def run(seed: int = 505) -> dict[str, float]:
     rng = np.random.default_rng(seed)
     rows = []
     band_rows = []
+    example_band_eigvals = None
+    example_threshold = None
     for label, delta in delta_specs:
         omega2 = omega1 + delta
         Y, phi, _ = generate_mirnov(
@@ -86,6 +98,9 @@ def run(seed: int = 505) -> dict[str, float]:
         C_band = C_band / 4.0
         eigvals_band, eigvecs_band = eigen_decomp(C_band)
         threshold = mp_edges(d, K)[1]
+        if label == "pi_over_L":
+            example_band_eigvals = eigvals_band.copy()
+            example_threshold = threshold
         n_hat_a, scores_a = estimate_n(eigvecs_band[:, 0], phi, np.arange(-10, 11))
         n_hat_b, scores_b = estimate_n(eigvecs_band[:, 1], phi, np.arange(-10, 11))
         band_rows.append(
@@ -138,6 +153,58 @@ def run(seed: int = 505) -> dict[str, float]:
     fig.tight_layout()
     fig.savefig(ROOT / "figures" / "fig5_band_averaged_outliers.png", dpi=160)
     plt.close(fig)
+
+    if example_band_eigvals is not None and example_threshold is not None:
+        outlier_mask = example_band_eigvals > example_threshold
+        bulk_like = example_band_eigvals[~outlier_mask]
+        outliers = example_band_eigvals[outlier_mask]
+        x_max = max(float(example_band_eigvals[0]) * 1.08, example_threshold * 1.2)
+        x_mp = np.linspace(mp_edges(d, K)[0], example_threshold, 500)
+
+        fig, ax = plt.subplots(figsize=(7.4, 4.7))
+        ax.hist(
+            bulk_like,
+            bins=np.linspace(0.0, x_max, 38),
+            density=True,
+            color="#b9cadb",
+            alpha=0.78,
+            edgecolor="white",
+            label="bulk eigenvalues",
+        )
+        ax.plot(x_mp, mp_density(x_mp, d / K), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
+        ax.annotate(
+            f"MP edge={example_threshold:.2f}",
+            xy=(example_threshold, 0.0),
+            xytext=(0.30, 0.84),
+            textcoords="axes fraction",
+            arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
+            color="#475569",
+            ha="left",
+        )
+        y_upper = ax.get_ylim()[1]
+        y_marker = 0.08 * y_upper
+        y_label = 0.17 * y_upper
+        for idx, val in enumerate(outliers, start=1):
+            ax.scatter(
+                [val],
+                [y_marker],
+                marker="D",
+                s=58,
+                color="#b42318",
+                edgecolor="white",
+                linewidth=0.8,
+                zorder=4,
+                label="outlier eigenvalue" if idx == 1 else None,
+            )
+            ax.text(val, y_label + 0.07 * y_upper * (idx - 1), f"{idx}: {val:.2f}", ha="center", va="bottom", fontsize=9, color="#7a271a")
+        ax.set_title("Two-mode example: two band-averaged coherence outliers")
+        ax.set_xlabel("Eigenvalue")
+        ax.set_ylabel("Density")
+        ax.set_ylim(bottom=0.0)
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(ROOT / "figures" / "fig5_two_spike_band_spectrum.png", dpi=160)
+        plt.close(fig)
 
     return {
         "cases": len(delta_specs),

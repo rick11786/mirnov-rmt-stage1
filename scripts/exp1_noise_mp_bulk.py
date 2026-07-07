@@ -82,7 +82,7 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.set_title("Noise-only coherence eigenvalues vs MP support")
     ax.set_xlabel("Eigenvalue")
     ax.set_ylabel("Density")
-    ax.set_xlim(0.2, 4.0)
+    ax.set_xlim(0.0, 4.0)
     ax.set_ylim(bottom=0.0)
     ax.legend()
     out = ROOT / "figures" / "fig1_noise_mp_bulk.png"
