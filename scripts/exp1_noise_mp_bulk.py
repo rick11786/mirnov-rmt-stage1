@@ -7,6 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.transforms import blended_transform_factory
 from scipy.stats import gaussian_kde
 
 from mirnov_rmt.rmt import eigen_decomp, mp_edges
@@ -16,6 +17,13 @@ from mirnov_rmt.synthetic import generate_mirnov
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def axis_marker(ax, x: float, label: str, color: str = "#475569") -> None:
+    """Place a compact marker and label on the x-axis."""
+    transform = blended_transform_factory(ax.transData, ax.transAxes)
+    ax.plot([x], [0.0], marker="v", markersize=5, color=color, transform=transform, clip_on=False)
+    ax.text(x, -0.075, label, transform=transform, ha="center", va="top", fontsize=8.5, color=color, clip_on=False)
 
 
 def mp_density(x: np.ndarray, q: float) -> np.ndarray:
@@ -61,28 +69,12 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.hist(eigvals, bins=np.linspace(0.0, 4.0, 34), density=True, color="#cad7e3", alpha=0.75, edgecolor="white", label="one realization")
     ax.plot(x_grid, empirical_density, color="#2563a6", linewidth=2.1, label=f"simulation density (B={B_density})")
     ax.plot(x_mp, mp_density(x_mp, d / X.shape[1]), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
-    ax.annotate(
-        rf"$\lambda_-$={lam_minus:.2f}",
-        xy=(lam_minus, 0.0),
-        xytext=(0.24, 0.07),
-        textcoords="axes fraction",
-        arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
-        color="#475569",
-        ha="left",
-    )
-    ax.annotate(
-        rf"$\lambda_+$={lam_plus:.2f}",
-        xy=(lam_plus, 0.0),
-        xytext=(0.79, 0.07),
-        textcoords="axes fraction",
-        arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
-        color="#475569",
-        ha="left",
-    )
+    axis_marker(ax, lam_minus, rf"$\lambda_-$ {lam_minus:.2f}")
+    axis_marker(ax, lam_plus, rf"$\lambda_+$ {lam_plus:.2f}")
     ax.set_title("Noise-only coherence eigenvalues vs MP support")
     ax.set_xlabel("Eigenvalue")
     ax.set_ylabel("Density")
-    ax.set_xlim(0.2, 4.0)
+    ax.set_xlim(0.0, 4.0)
     ax.set_ylim(bottom=0.0)
     ax.legend()
     out = ROOT / "figures" / "fig1_noise_mp_bulk.png"

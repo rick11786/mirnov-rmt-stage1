@@ -7,6 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.transforms import blended_transform_factory
 
 from mirnov_rmt.baselines import svd_stat
 from mirnov_rmt.mode_fit import estimate_n
@@ -17,6 +18,13 @@ from mirnov_rmt.synthetic import generate_mirnov
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def axis_marker(ax, x: float, label: str, color: str = "#475569", marker: str = "v") -> None:
+    """Place a compact marker and label on the x-axis."""
+    transform = blended_transform_factory(ax.transData, ax.transAxes)
+    ax.plot([x], [0.0], marker=marker, markersize=5, color=color, transform=transform, clip_on=False)
+    ax.text(x, -0.075, label, transform=transform, ha="center", va="top", fontsize=8.5, color=color, clip_on=False)
 
 
 def mp_density(x: np.ndarray, q: float) -> np.ndarray:
@@ -172,31 +180,9 @@ def run(seed: int = 505) -> dict[str, float]:
             label="bulk eigenvalues",
         )
         ax.plot(x_mp, mp_density(x_mp, d / K), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
-        ax.annotate(
-            f"MP edge={example_threshold:.2f}",
-            xy=(example_threshold, 0.0),
-            xytext=(0.16, 0.07),
-            textcoords="axes fraction",
-            arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
-            color="#475569",
-            ha="left",
-        )
-        y_upper = ax.get_ylim()[1]
-        y_marker = 0.045 * y_upper
-        y_label = 0.085 * y_upper
+        axis_marker(ax, example_threshold, f"MP {example_threshold:.2f}")
         for idx, val in enumerate(outliers, start=1):
-            ax.scatter(
-                [val],
-                [y_marker],
-                marker="D",
-                s=58,
-                color="#b42318",
-                edgecolor="white",
-                linewidth=0.8,
-                zorder=4,
-                label="outlier eigenvalue" if idx == 1 else None,
-            )
-            ax.text(val, y_label + 0.045 * y_upper * (idx - 1), f"{idx}: {val:.2f}", ha="center", va="bottom", fontsize=9, color="#7a271a")
+            axis_marker(ax, val, f"outlier {idx}: {val:.2f}", color="#b42318", marker="D")
         ax.set_title("Two-mode example: two band-averaged coherence outliers")
         ax.set_xlabel("Eigenvalue")
         ax.set_ylabel("Density")
