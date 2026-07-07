@@ -64,7 +64,7 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.annotate(
         rf"$\lambda_-$={lam_minus:.2f}",
         xy=(lam_minus, 0.0),
-        xytext=(0.31, 0.94),
+        xytext=(0.24, 0.07),
         textcoords="axes fraction",
         arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
         color="#475569",
@@ -73,7 +73,7 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.annotate(
         rf"$\lambda_+$={lam_plus:.2f}",
         xy=(lam_plus, 0.0),
-        xytext=(0.78, 0.80),
+        xytext=(0.79, 0.07),
         textcoords="axes fraction",
         arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
         color="#475569",
@@ -82,7 +82,7 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.set_title("Noise-only coherence eigenvalues vs MP support")
     ax.set_xlabel("Eigenvalue")
     ax.set_ylabel("Density")
-    ax.set_xlim(0.0, 4.0)
+    ax.set_xlim(0.2, 4.0)
     ax.set_ylim(bottom=0.0)
     ax.legend()
     out = ROOT / "figures" / "fig1_noise_mp_bulk.png"

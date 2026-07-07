@@ -58,15 +58,15 @@ def run(seed: int = 202) -> dict[str, float]:
     ax.annotate(
         f"MP edge={threshold:.2f}",
         xy=(threshold, 0.0),
-        xytext=(0.63, 0.78),
+        xytext=(0.55, 0.07),
         textcoords="axes fraction",
         arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
         color="#475569",
         ha="left",
     )
     y_upper = ax.get_ylim()[1]
-    y_marker = 0.08 * y_upper
-    y_label = 0.17 * y_upper
+    y_marker = 0.045 * y_upper
+    y_label = 0.085 * y_upper
     for idx, val in enumerate(outliers, start=1):
         ax.scatter(
             [val],
@@ -81,7 +81,7 @@ def run(seed: int = 202) -> dict[str, float]:
         )
         ax.text(
             val,
-            y_label + 0.07 * y_upper * (idx - 1),
+            y_label + 0.045 * y_upper * (idx - 1),
             f"{idx}: {val:.2f}",
             ha="center",
             va="bottom",

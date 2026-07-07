@@ -175,15 +175,15 @@ def run(seed: int = 505) -> dict[str, float]:
         ax.annotate(
             f"MP edge={example_threshold:.2f}",
             xy=(example_threshold, 0.0),
-            xytext=(0.30, 0.84),
+            xytext=(0.16, 0.07),
             textcoords="axes fraction",
             arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
             color="#475569",
             ha="left",
         )
         y_upper = ax.get_ylim()[1]
-        y_marker = 0.08 * y_upper
-        y_label = 0.17 * y_upper
+        y_marker = 0.045 * y_upper
+        y_label = 0.085 * y_upper
         for idx, val in enumerate(outliers, start=1):
             ax.scatter(
                 [val],
@@ -196,7 +196,7 @@ def run(seed: int = 505) -> dict[str, float]:
                 zorder=4,
                 label="outlier eigenvalue" if idx == 1 else None,
             )
-            ax.text(val, y_label + 0.07 * y_upper * (idx - 1), f"{idx}: {val:.2f}", ha="center", va="bottom", fontsize=9, color="#7a271a")
+            ax.text(val, y_label + 0.045 * y_upper * (idx - 1), f"{idx}: {val:.2f}", ha="center", va="bottom", fontsize=9, color="#7a271a")
         ax.set_title("Two-mode example: two band-averaged coherence outliers")
         ax.set_xlabel("Eigenvalue")
         ax.set_ylabel("Density")
