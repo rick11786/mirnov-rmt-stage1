@@ -13,7 +13,7 @@ WINDOWS_ROOT = Path("/mnt/c/Users/28105/Documents/mirnov_rmt_stage1")
 def copy_file(src: Path, dst: Path) -> None:
     if src.exists():
         dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dst)
+        shutil.copyfile(src, dst)
 
 
 def copy_tree_contents(src_dir: Path, dst_dir: Path) -> None:
@@ -27,9 +27,9 @@ def copy_tree_contents(src_dir: Path, dst_dir: Path) -> None:
         if src.is_dir():
             if dst.exists():
                 shutil.rmtree(dst)
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, copy_function=shutil.copyfile)
         else:
-            shutil.copy2(src, dst)
+            shutil.copyfile(src, dst)
 
 
 def main() -> None:
