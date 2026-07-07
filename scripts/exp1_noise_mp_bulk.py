@@ -61,12 +61,28 @@ def run(seed: int = 101) -> dict[str, float]:
     ax.hist(eigvals, bins=np.linspace(0.0, 4.0, 34), density=True, color="#cad7e3", alpha=0.75, edgecolor="white", label="one realization")
     ax.plot(x_grid, empirical_density, color="#2563a6", linewidth=2.1, label=f"simulation density (B={B_density})")
     ax.plot(x_mp, mp_density(x_mp, d / X.shape[1]), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
-    ax.axvline(lam_minus, color="#222222", linestyle="--", label=rf"$\lambda_-$={lam_minus:.2f}")
-    ax.axvline(lam_plus, color="#c03a2b", linestyle="--", label=rf"$\lambda_+$={lam_plus:.2f}")
+    ax.annotate(
+        rf"$\lambda_-$={lam_minus:.2f}",
+        xy=(lam_minus, 0.0),
+        xytext=(0.31, 0.94),
+        textcoords="axes fraction",
+        arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
+        color="#475569",
+        ha="left",
+    )
+    ax.annotate(
+        rf"$\lambda_+$={lam_plus:.2f}",
+        xy=(lam_plus, 0.0),
+        xytext=(0.78, 0.80),
+        textcoords="axes fraction",
+        arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
+        color="#475569",
+        ha="left",
+    )
     ax.set_title("Noise-only coherence eigenvalues vs MP support")
     ax.set_xlabel("Eigenvalue")
     ax.set_ylabel("Density")
-    ax.set_xlim(0.0, 4.0)
+    ax.set_xlim(0.2, 4.0)
     ax.set_ylim(bottom=0.0)
     ax.legend()
     out = ROOT / "figures" / "fig1_noise_mp_bulk.png"

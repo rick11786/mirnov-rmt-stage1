@@ -55,7 +55,15 @@ def run(seed: int = 202) -> dict[str, float]:
     fig, ax = plt.subplots(figsize=(7.4, 4.7))
     ax.hist(bulk_like, bins=np.linspace(0.0, x_max, 36), density=True, color="#87aeca", alpha=0.78, edgecolor="white", label="bulk eigenvalues")
     ax.plot(x_mp, mp_density(x_mp, d / K), color="#c2410c", linewidth=2.0, linestyle="--", label="MP density")
-    ax.axvline(threshold, color="#c03a2b", linestyle="--", label=f"MP edge={threshold:.2f}")
+    ax.annotate(
+        f"MP edge={threshold:.2f}",
+        xy=(threshold, 0.0),
+        xytext=(0.63, 0.78),
+        textcoords="axes fraction",
+        arrowprops={"arrowstyle": "-", "color": "#475569", "lw": 1.0},
+        color="#475569",
+        ha="left",
+    )
     for idx, val in enumerate(outliers, start=1):
         ax.axvline(val, color="#b42318", linewidth=2.2)
         ax.annotate(
